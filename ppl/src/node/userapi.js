@@ -178,29 +178,36 @@ commentsend:function(imgname,cb){
 
 //like section
 like:function(imgname,email,cb){
-  console.log("this is a " + email)
- imageSchema.find(
-  { "fileName": imgname, "like":email },(err,result)=>{
-    if(err)
-    console.log(err)
-    else{
-      console.log("")
-        if(result.length>0)
-        return (null,null)
-        else{
-      
-          imageSchema.updateOne({ "fileName": imgname },
-          { "$push": { "like": email} },(err,result)=>{
-            if(err)
-            console.log(err)
-            else 
-            return cb(null,result);
-          })
-
-        }
-      
-    }
-  })
+imageSchema.find(
+{ "fileName": imgname, "like":email },(err,result)=>{
+if(err)
+console.log(err)
+else{
+console.log("")
+if(result.length>0){
+imageSchema.updateOne({"fileName":imgname},
+{"$pull": {"like":email} }, (err,result)=>{
+console.log("pulling email from like array")
+console.log(result)
+if(err)
+console.log(err)
+else 
+return cb(null,result);
+}) 
+}
+else{
+imageSchema.updateOne({ "fileName": imgname },
+{ "$push": { "like": email} },(err,result)=>{
+console.log("pushing into array")
+console.log(result)
+if(err)
+console.log(err)
+else 
+return cb(null,result);
+})
+}
+}
+})
 },
 
 //like sending
